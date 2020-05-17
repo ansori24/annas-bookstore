@@ -4,10 +4,8 @@ namespace App\Console\Commands;
 
 use App\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Passport\PersonalAccessTokenResult;
 
-class SetupDevelopmentEnvironment extends Command
+class SetupDevelopEnvirontment extends Command
 {
     protected $signature = 'dev:setup';
 
