@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Author;
 use Illuminate\Http\Request;
 use App\Http\Resources\AuthorsResource;
+use App\Http\Requests\CreateAuthorRequest;
+use App\Http\Requests\UpdateAuthorRequest;
 
 class AuthorsController extends Controller
 {
@@ -23,10 +25,10 @@ class AuthorsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\CreateAuthorRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateAuthorRequest $request)
     {
         $author = Author::create([
             'name' => $request->input('data.attributes.name')
@@ -51,11 +53,11 @@ class AuthorsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UpdateAuthorRequest  $request
      * @param  \App\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Author $author)
+    public function update(UpdateAuthorRequest $request, Author $author)
     {
         $author->update($request->input('data.attributes'));
 
