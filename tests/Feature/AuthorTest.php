@@ -284,6 +284,265 @@ class AuthorTest extends TestCase
     }
 
     /** @test */
+    public function it_validates_that_an_id_member_is_given_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'type' => 'authors',
+                'attributes' => [
+                    'name' => $this->faker->name()
+                ]
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.id field is required.',
+                        'source' => [
+                            'pointer' => '/data/id'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
+    public function it_validates_that_an_id_member_is_string_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => 1,
+                'type' => 'authors',
+                'attributes' => [
+                    'name' => $this->faker->name()
+                ]
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.id must be a string.',
+                        'source' => [
+                            'pointer' => '/data/id'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
+    public function it_validates_that_a_type_member_is_given_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => '1',
+                'type' => '',
+                'attributes' => [
+                    'name' => $this->faker->name()
+                ]
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.type field is required.',
+                        'source' => [
+                            'pointer' => '/data/type'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
+    public function it_validates_that_a_type_member_has_value_of_authors_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => '1',
+                'type' => 'author',
+                'attributes' => [
+                    'name' => $this->faker->name()
+                ]
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The selected data.type is invalid.',
+                        'source' => [
+                            'pointer' => '/data/type'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
+    public function it_validates_that_attibutes_of_member_is_given_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => '1',
+                'type' => 'authors',
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.attributes field is required.',
+                        'source' => [
+                            'pointer' => '/data/attributes'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
+    public function it_validates_that_attibutes_of_member_is_an_object_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => '1',
+                'type' => 'authors',
+                'attributes' => 'not an object'
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.attributes must be an array.',
+                        'source' => [
+                            'pointer' => '/data/attributes'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
+    public function it_validates_that_attibutes_name_is_required_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => '1',
+                'type' => 'authors',
+                'attributes' => [
+                    'name' => ''
+                ]
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.attributes.name field is required.',
+                        'source' => [
+                            'pointer' => '/data/attributes/name'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    
+    /** @test */
+    public function it_validates_that_attibutes_name_must_be_a_string_when_updating_an_author()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->patchJson(route('authors.update', $author), [
+            'data' => [
+                'id' => '1',
+                'type' => 'authors',
+                'attributes' => [
+                    'name' => 1
+                ]
+            ]
+        ])
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    [
+                        'title' => 'Validation Error',
+                        'details' =>  'The data.attributes.name must be a string.',
+                        'source' => [
+                            'pointer' => '/data/attributes/name'
+                        ]
+                    ]
+                ]
+            ]);
+        $this->assertDatabaseHas('authors', [
+            'id' => 1,
+            'name' => $author->name
+        ]);
+    }
+
+    /** @test */
     public function it_can_delete_an_author_through_a_delete_request()
     {
         Passport::actingAs(factory(User::class)->create());
