@@ -48,6 +48,46 @@ class AuthorTest extends TestCase
     }
 
     /** @test */
+    public function it_can_paginate_authors_through_a_page_query_parameter()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $authors = factory(Author::class, 10)->create();
+
+        $this->getJson(route('authors.index', ['page[size]' => 5, 'page[number]' => 1]), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $authors[0]->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $authors[0]->name,
+                            'created_at' => $authors[0]->created_at->toJson(),
+                            'updated_at' => $authors[0]->updated_at->toJson(),
+                        ]
+                    ], [
+                        'id' => $authors[1]->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $authors[1]->name,
+                            'created_at' => $authors[1]->created_at->toJson(),
+                            'updated_at' => $authors[1]->updated_at->toJson(),
+                        ]
+                    ],
+                ],
+                'links' => [
+                    'first' => route('authors.index', ['page[size]' => 5, 'page[number]' => 1]),
+                    'last' => route('authors.index', ['page[size]' => 5, 'page[number]' => 2]),
+                    'prev' => null,
+                    'next' => route('authors.index', ['page[size]' => 5, 'page[number]' => 2])
+                ]
+            ]);
+    }
+
+    /** @test */
     public function it_can_sort_authors_by_name_through_a_sort_query_parameter()
     {
         $this->withoutExceptionHandling();
