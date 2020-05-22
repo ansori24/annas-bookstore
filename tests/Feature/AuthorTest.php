@@ -19,7 +19,10 @@ class AuthorTest extends TestCase
         Passport::actingAs(factory(User::class)->create());
         $author = factory(Author::class)->create();
 
-        $this->getJson(route('authors.show', $author))
+        $this->getJson(route('authors.show', $author), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
             ->assertOk()
             ->assertJson([
                 'data' => [
@@ -40,7 +43,10 @@ class AuthorTest extends TestCase
         Passport::actingAs(factory(User::class)->create());
         $authors = factory(Author::class, 2)->create();
 
-        $this->getJson(route('authors.index'))
+        $this->getJson(route('authors.index'), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
             ->assertOk()
             ->assertJson([
                 'data' => [
@@ -77,6 +83,12 @@ class AuthorTest extends TestCase
                     'name' => $name = $this->faker->name(),
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(201)
             ->assertJson([
@@ -107,6 +119,12 @@ class AuthorTest extends TestCase
                     'name' => $name = $this->faker->name(),
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -134,6 +152,9 @@ class AuthorTest extends TestCase
                     'name' => $name = $this->faker->name(),
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -158,6 +179,9 @@ class AuthorTest extends TestCase
             'data' => [
                 'type' => 'authors',
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -183,6 +207,9 @@ class AuthorTest extends TestCase
                 'type' => 'authors',
                 'attributes' => 'not an array'
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -210,6 +237,9 @@ class AuthorTest extends TestCase
                     'name' => ''
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -237,6 +267,9 @@ class AuthorTest extends TestCase
                     'name' => 47
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -266,6 +299,9 @@ class AuthorTest extends TestCase
                     'name' => $newName = $this->faker->name()
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertOk()
             ->assertJson([
@@ -296,6 +332,9 @@ class AuthorTest extends TestCase
                     'name' => $this->faker->name()
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -329,6 +368,9 @@ class AuthorTest extends TestCase
                     'name' => $this->faker->name()
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -362,6 +404,9 @@ class AuthorTest extends TestCase
                     'name' => $this->faker->name()
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -395,6 +440,9 @@ class AuthorTest extends TestCase
                     'name' => $this->faker->name()
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -425,6 +473,9 @@ class AuthorTest extends TestCase
                 'id' => '1',
                 'type' => 'authors',
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -456,6 +507,9 @@ class AuthorTest extends TestCase
                 'type' => 'authors',
                 'attributes' => 'not an object'
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -489,6 +543,9 @@ class AuthorTest extends TestCase
                     'name' => ''
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
@@ -508,7 +565,7 @@ class AuthorTest extends TestCase
         ]);
     }
 
-    
+
     /** @test */
     public function it_validates_that_attibutes_name_must_be_a_string_when_updating_an_author()
     {
@@ -523,6 +580,9 @@ class AuthorTest extends TestCase
                     'name' => 1
                 ]
             ]
+        ], [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
         ])
             ->assertStatus(422)
             ->assertJson([
