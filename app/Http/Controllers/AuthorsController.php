@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Author;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Resources\AuthorsResource;
 use App\Http\Requests\CreateAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
@@ -17,7 +18,9 @@ class AuthorsController extends Controller
      */
     public function index()
     {
-        $authors = Author::all();
+        $authors = QueryBuilder::for(Author::class)
+            ->allowedSorts(['created_at', 'name'])
+            ->get();
 
         return AuthorsResource::collection($authors);
     }

@@ -14,30 +14,6 @@ class AuthorTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     /** @test */
-    public function it_returns_an_author_as_a_resource_object()
-    {
-        Passport::actingAs(factory(User::class)->create());
-        $author = factory(Author::class)->create();
-
-        $this->getJson(route('authors.show', $author), [
-            'accept' => 'application/vnd.api+json',
-            'content-type' => 'application/vnd.api+json'
-        ])
-            ->assertOk()
-            ->assertJson([
-                'data' => [
-                    'id' => $author->id,
-                    'type' => 'authors',
-                    'attributes' => [
-                        'name' => $author->name,
-                        'created_at' => $author->created_at->toJson(),
-                        'updated_at' => $author->updated_at->toJson(),
-                    ]
-                ]
-            ]);
-    }
-
-    /** @test */
     public function it_returns_all_authors_as_a_collection_of_resource_objects()
     {
         Passport::actingAs(factory(User::class)->create());
@@ -67,6 +43,155 @@ class AuthorTest extends TestCase
                             'updated_at' => $authors[1]->updated_at->toJson(),
                         ]
                     ],
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_can_sort_authors_by_name_through_a_sort_query_parameter()
+    {
+        $this->withoutExceptionHandling();
+        Passport::actingAs(factory(User::class)->create());
+
+        [$bertram, $clause, $anna] = collect(['Bertram', 'Clause', 'Anna'])->map(function ($name) {
+            return factory(Author::class)->create(['name' => $name]);
+        });
+
+        $this->getJson(route('authors.index', ['sort' => 'name']), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $anna->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $anna->name,
+                        ]
+                    ], [
+                        'id' => $bertram->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $bertram->name,
+                        ]
+                    ], [
+                        'id' => $clause->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $clause->name,
+                        ]
+                    ],
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_can_sort_authors_by_name_in_descending_order_through_a_sort_query_paramaters()
+    {
+        $this->withoutExceptionHandling();
+        Passport::actingAs(factory(User::class)->create());
+
+        [$bertram, $clause, $anna] = collect(['Bertram', 'Clause', 'Anna'])->map(function ($name) {
+            return factory(Author::class)->create(['name' => $name]);
+        });
+
+        $this->getJson(route('authors.index', ['sort' => '-name']), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $clause->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $clause->name,
+                        ]
+                    ], [
+                        'id' => $bertram->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $bertram->name,
+                        ]
+                    ], [
+                        'id' => $anna->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $anna->name,
+
+                        ]
+                    ],
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_can_sort_authors_by_multiple_attributes_through_a_sort_query_parameter()
+    {
+        $this->withoutExceptionHandling();
+        Passport::actingAs(factory(User::class)->create());
+
+        $createdAt = now();
+
+        [$bertram, $clause, $anna] = collect(['Bertram', 'Clause', 'Anna'])->map(function ($name) use ($createdAt) {
+            $createdAt->addSecond(1);
+            return factory(Author::class)->create(['name' => $name, 'created_at' => $createdAt]);
+        });
+
+        $this->getJson(route('authors.index', ['sort' => 'created_at,name']), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    [
+                        'id' => $bertram->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $bertram->name,
+                        ]
+                    ], [
+                        'id' => $clause->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $clause->name,
+                        ]
+                    ], [
+                        'id' => $anna->id,
+                        'type' => 'authors',
+                        'attributes' => [
+                            'name' => $anna->name,
+
+                        ]
+                    ],
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_an_author_as_a_resource_object()
+    {
+        Passport::actingAs(factory(User::class)->create());
+        $author = factory(Author::class)->create();
+
+        $this->getJson(route('authors.show', $author), [
+            'accept' => 'application/vnd.api+json',
+            'content-type' => 'application/vnd.api+json'
+        ])
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    'id' => $author->id,
+                    'type' => 'authors',
+                    'attributes' => [
+                        'name' => $author->name,
+                        'created_at' => $author->created_at->toJson(),
+                        'updated_at' => $author->updated_at->toJson(),
+                    ]
                 ]
             ]);
     }
